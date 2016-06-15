@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include "h264encoder.h"
-
+#define Pic_Size 640*480;
 
 
 void compress_begin(Encoder *en, int width, int height) {
@@ -48,30 +48,28 @@ int compress_frame(Encoder *en, int type, uint8_t *in, uint8_t *out) {
     char *u = en->picture->img.plane[1];
     char *v = en->picture->img.plane[2];
 
-
+    y = in;
+    u = in+Pic_Size;
+    v = in+Pic_Size+Pic_Size/4;
 ///////////////////////////////////////YUV422转YUV420算法///////////////////////////////////////////
-    int widthStep422 = en->param->i_width * 2;
-
-    for(i = 0; i < en->param->i_height; i += 2)
-    {
-        p422 = in + i * widthStep422;
-
-        for(j = 0; j < widthStep422; j+=4)
-        {
-            *(y++) = p422[j];
-            *(u++) = p422[j+1];
-            *(y++) = p422[j+2];
-        }
-
-        p422 += widthStep422;
-
-        for(j = 0; j < widthStep422; j+=4)
-        {
-            *(y++) = p422[j];
-            *(v++) = p422[j+3];
-            *(y++) = p422[j+2];
-        }
-    }
+    // int widthStep422 = en->param->i_width * 2; 
+    // for(i = 0; i < en->param->i_height; i += 2)
+    // {
+        // p422 = in + i * widthStep422;
+        // for(j = 0; j < widthStep422; j+=4)
+        // {
+            // *(y++) = p422[j];
+            // *(u++) = p422[j+1];
+            // *(y++) = p422[j+2];
+        // }
+        // p422 += widthStep422;
+        // for(j = 0; j < widthStep422; j+=4)
+        // {
+            // *(y++) = p422[j];
+            // *(v++) = p422[j+3];
+            // *(y++) = p422[j+2];
+        // }
+    // }
 //////////////////////////////////////////////////////////////////////////////////////
 
     switch (type) {
