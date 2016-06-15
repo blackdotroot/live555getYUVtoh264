@@ -493,7 +493,7 @@ typedef struct
     int     i_csp;       /* Colorspace */
     int     i_plane;     /* Number of image planes */
     int     i_stride[4]; /* Strides for each plane */
-    uint8_t *plane[4];   /* Pointers to each plane */
+    uint8_t *plane[4];   /* Pointers to each plane 代表色彩空间的个数*/
 } x264_image_t;
 
 typedef struct

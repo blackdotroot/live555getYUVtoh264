@@ -153,7 +153,6 @@ static void initBuff1(struct frame_O *c) {
     c->size=0;
 
     pthread_rwlock_init(&c->rwlock, NULL);
-
 }
 
 

@@ -19,7 +19,7 @@
 #include "h264encoder.h"
 
 #define CLEAR(x) memset (&(x), 0, sizeof (x))
-
+#define Cam_Frame_Size 640*480*3/2;
 typedef unsigned char uint8_t;
 
 //static char *dev_name = "/dev/video0";
@@ -27,6 +27,7 @@ typedef unsigned char uint8_t;
 char h264_file_name[100] = "01.264\0";
 FILE *h264_fp;
 uint8_t *h264_buf;
+
 
 
 unsigned int n_buffers = 0;
@@ -128,52 +129,51 @@ void encode_frame(unsigned char *yuv_frame, int *wfd ,struct frame_O *frameout) 
 
 int buffOneFrame(struct cam_data *tmp , struct camera *cam )
 {
-    unsigned char * data;
-
-    int len;
-
-    struct v4l2_buffer buf;
-
-    CLEAR(buf);
-
-    buf.type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
-    buf.memory = V4L2_MEMORY_MMAP;
+    int rets;
+    int length;
+    // struct v4l2_buffer buf;
+// 
+    // CLEAR(buf);
+// 
+    // buf.type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
+    // buf.memory = V4L2_MEMORY_MMAP;
 
     //this operator below will change buf.index and (0 <= buf.index <= 3)
-    if (-1 == ioctl(cam->fd, VIDIOC_DQBUF, &buf)) {
-        switch (errno) {
-        case EAGAIN:
-            return 0;
-        case EIO:
-
-        default:
-            errno_exit("VIDIOC_DQBUF");
-        }
-    }
+    // if (-1 == ioctl(cam->fd, VIDIOC_DQBUF, &buf)) {
+        // switch (errno) {
+        // case EAGAIN:
+            // return 0;
+        // case EIO:
+        // default:
+            // errno_exit("VIDIOC_DQBUF");
+        // }
+    // }
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
-        data = (unsigned char *)(cam->buffers[buf.index].start);//当前帧的首地址
+        // data = (unsigned char *)(cam->buffers[buf.index].start);//当前帧的首地址
 
-        len =(size_t)buf.bytesused;//当前帧的长度
-
-        if(tmp->wpos+len<=BUF_SIZE)    //缓冲区剩余空间足够存放当前帧数据
+        // len =(size_t)buf.bytesused;//当前帧的长度
+        length=Cam_Frame_Size;
+        if(tmp->wpos+length<=BUF_SIZE)    //缓冲区剩余空间足够存放当前帧数据
         {
-            memcpy(tmp->cam_mbuf+tmp->wpos, data ,len);//把一帧数据拷贝到缓冲区
-
-            tmp->wpos+=len;
+            //memcpy(tmp->cam_mbuf+tmp->wpos, data ,length);//把一帧数据拷贝到缓冲区
+            rets=read(cam->fd, tmp->cam_mbuf+tmp->wpos, length);
+			if(rets<0){
+				printf("can not read from camera");
+				return;
+				}
+            tmp->wpos+=length;
         }
 
-        if (-1 == ioctl(cam->fd, VIDIOC_QBUF, &buf))//
-            errno_exit("VIDIOC_QBUF");
+        // if (-1 == ioctl(cam->fd, VIDIOC_QBUF, &buf))//
+        // errno_exit("VIDIOC_QBUF");
 
-        if(tmp->wpos+len>BUF_SIZE)    //缓冲区剩余空间不够存放当前帧数据，切换下一缓冲区
+        if(tmp->wpos+length>BUF_SIZE)    //缓冲区剩余空间不够存放当前帧数据，切换下一缓冲区
         {
 
             return 1;
         }
-
-
             return 0;
 
 
@@ -184,18 +184,18 @@ void start_capturing(struct camera *cam) {
     unsigned int i;
     enum v4l2_buf_type type;
 
-    for (i = 0; i < n_buffers; ++i) {
-        struct v4l2_buffer buf;
-
-        CLEAR(buf);
-
-        buf.type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
-        buf.memory = V4L2_MEMORY_MMAP;
-        buf.index = i;
-
-        if (-1 == xioctl(cam->fd, VIDIOC_QBUF, &buf))
-            errno_exit("VIDIOC_QBUF");
-    }
+    // for (i = 0; i < n_buffers; ++i) {
+        // struct v4l2_buffer buf;
+// 
+        // CLEAR(buf);
+// 
+        // buf.type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
+        // buf.memory = V4L2_MEMORY_MMAP;
+        // buf.index = i;
+// 
+        // if (-1 == xioctl(cam->fd, VIDIOC_QBUF, &buf))
+            // errno_exit("VIDIOC_QBUF");
+    // }
 
     type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
 
@@ -255,27 +255,27 @@ void init_mmap(struct camera *cam) {
         exit(EXIT_FAILURE);
     }
 
-    for (n_buffers = 0; n_buffers < req.count; ++n_buffers) {
-        struct v4l2_buffer buf;
-
-        CLEAR(buf);
-
-        buf.type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
-        buf.memory = V4L2_MEMORY_MMAP;
-        buf.index = n_buffers;
-
+    // for (n_buffers = 0; n_buffers < req.count; ++n_buffers) {
+        // struct v4l2_buffer buf;
+// 
+        // CLEAR(buf);
+// 
+        // buf.type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
+        // buf.memory = V4L2_MEMORY_MMAP;
+        // buf.index = n_buffers;
+// 
         //将VIDIOC_REQBUFS中分配的数据缓存转换成物理地址
-        if (-1 == xioctl(cam->fd, VIDIOC_QUERYBUF, &buf))
-            errno_exit("VIDIOC_QUERYBUF");
-
-        cam->buffers[n_buffers].length = buf.length;
-        cam->buffers[n_buffers].start = mmap(NULL ,
-                buf.length, PROT_READ | PROT_WRITE ,
-                MAP_SHARED , cam->fd, buf.m.offset);
-
-        if (MAP_FAILED == cam->buffers[n_buffers].start)
-            errno_exit("mmap");
-    }
+        // if (-1 == xioctl(cam->fd, VIDIOC_QUERYBUF, &buf))
+            // errno_exit("VIDIOC_QUERYBUF");
+// 
+        // cam->buffers[n_buffers].length = buf.length;
+        // cam->buffers[n_buffers].start = mmap(NULL ,
+                // buf.length, PROT_READ | PROT_WRITE ,
+                // MAP_SHARED , cam->fd, buf.m.offset);
+// 
+        // if (MAP_FAILED == cam->buffers[n_buffers].start)
+            // errno_exit("mmap");
+    // }
 }
 
 void init_camera(struct camera *cam) {
@@ -287,8 +287,8 @@ void init_camera(struct camera *cam) {
     fmt->type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
     fmt->fmt.pix.width = cam->width;
     fmt->fmt.pix.height = cam->height;
-    fmt->fmt.pix.pixelformat = V4L2_PIX_FMT_YUYV; //yuv422
-    //  fmt->fmt.pix.pixelformat = V4L2_PIX_FMT_YUV420
+    //fmt->fmt.pix.pixelformat = V4L2_PIX_FMT_YUYV; //yuv422
+    fmt->fmt.pix.pixelformat = V4L2_PIX_FMT_YUV420
     fmt->fmt.pix.field = V4L2_FIELD_INTERLACED;
 
     if (-1 == xioctl(cam->fd, VIDIOC_S_FMT, fmt))

@@ -4,8 +4,8 @@
 #include <linux/videodev2.h>
 #include <pthread.h>
 
-#define PIC_WIDTH 480
-#define PIC_HEIGHT 288
+#define PIC_WIDTH 640
+#define PIC_HEIGHT 480
 #define BUF_SIZE PIC_WIDTH * PIC_HEIGHT * 2 * 2
 //C270 YUV 4:2:2 frame size(char)
 

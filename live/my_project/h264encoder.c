@@ -7,8 +7,8 @@
 
 void compress_begin(Encoder *en, int width, int height) {
     
-    int m_frameRate=25;//帧率
-    int m_bitRate=1000;//码率
+    int m_frameRate=25;//֡��
+    int m_bitRate=1000;//����
     en->param = (x264_param_t *) malloc(sizeof(x264_param_t));
     en->picture = (x264_picture_t *) malloc(sizeof(x264_picture_t));
     x264_param_default_preset(en->param, "ultrafast" , "zerolatency" ); //傻瓜式配置参数，选择最优速度+实时编码模式
