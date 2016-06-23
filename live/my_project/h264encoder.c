@@ -1,4 +1,4 @@
-#include <stdio.h>
+﻿#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include "h264encoder.h"
@@ -92,14 +92,11 @@ int compress_frame(Encoder *en, int type, uint8_t *in, uint8_t *out) {
         return -1;
     }
     en->picture->i_pts++;
-
-
     for (i = 0; i < nNal; i++) {
         memcpy(p_out, en->nal[i].p_payload, en->nal[i].i_payload);
         p_out += en->nal[i].i_payload;
         result += en->nal[i].i_payload;
     }
-
     return result;
 }
 

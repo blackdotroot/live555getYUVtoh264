@@ -19,7 +19,7 @@
 #include "h264encoder.h"
 
 #define CLEAR(x) memset (&(x), 0, sizeof (x))
-#define Cam_Frame_Size 640*480*3/2;
+#define Cam_Frame_Size 720*272;
 typedef unsigned char uint8_t;
 
 //static char *dev_name = "/dev/video0";
@@ -131,7 +131,7 @@ int buffOneFrame(struct cam_data *tmp , struct camera *cam )
 {
     int rets;
     int length;
-    // struct v4l2_buffer buf;
+    //struct v4l2_buffer buf;
 // 
     // CLEAR(buf);
 // 
@@ -155,25 +155,25 @@ int buffOneFrame(struct cam_data *tmp , struct camera *cam )
 
         // len =(size_t)buf.bytesused;//当前帧的长度
         length=Cam_Frame_Size;
-        if(tmp->wpos+length<=BUF_SIZE)    //缓冲区剩余空间足够存放当前帧数据
-        {
+        //if(tmp->wpos+length<=BUF_SIZE)    //缓冲区剩余空间足够存放当前帧数据
+        //{
             //memcpy(tmp->cam_mbuf+tmp->wpos, data ,length);//把一帧数据拷贝到缓冲区
-            rets=read(cam->fd, tmp->cam_mbuf+tmp->wpos, length);
+            rets=read(cam->fd, tmp->cam_mbuf, length);
 			if(rets<0){
 				printf("can not read from camera");
-				return;
+				return -1;
 				}
-            tmp->wpos+=length;
-        }
+            //tmp->wpos+=length;
+        //}
 
         // if (-1 == ioctl(cam->fd, VIDIOC_QBUF, &buf))//
         // errno_exit("VIDIOC_QBUF");
 
-        if(tmp->wpos+length>BUF_SIZE)    //缓冲区剩余空间不够存放当前帧数据，切换下一缓冲区
-        {
+        //if(tmp->wpos+length>BUF_SIZE)    //缓冲区剩余空间不够存放当前帧数据，切换下一缓冲区
+        //{
 
-            return 1;
-        }
+        //    return 1;
+       // }
             return 0;
 
 

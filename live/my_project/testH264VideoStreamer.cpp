@@ -29,7 +29,7 @@ extern "C"
 }
 
 
-struct cam_data Buff[2];//采集线程缓冲区
+struct cam_data Buff[1];//采集线程缓冲区 Buff[2]
 
 pthread_t thread[3];//三个线程分别为：采集线程，编码线程，发布线程
 int volatile flag[2];//状态标志位
@@ -115,22 +115,15 @@ int init() {
 
     pipe(pipefd);//创建管道用于live555发送进程与编码进程的通信测试
     }
-
     thread_create();//创建线程
-
     thread_wait();//等待线程结束
-
     v4l2_close(cam);//关闭采集器和编码器
-
     return 0;
 
 }
 
 static void initBuff(struct cam_data *c) {
-    flag[0] = flag[1] = 0;
-
     c = (struct cam_data *) malloc(sizeof(struct cam_data));
-
     if (!c) {
         printf("malloc cam_data *c failure!\n");
         exit(1);
@@ -176,35 +169,16 @@ void *video_Capture_Thread(void*) {
 
         outtime.tv_nsec = DelayTime * 1000;
 
-        pthread_mutex_lock(&(Buff[i].lock));
+        pthread_mutex_lock(&(Buff.lock));
 
-        while ((Buff[i].wpos + len) % BUF_SIZE == Buff[i].rpos && Buff[i].rpos
-                != 0) {
-            pthread_cond_timedwait(&(Buff[i].encodeOK), &(Buff[i].lock),
-                    &outtime);
+        pthread_cond_timedwait(&(Buff.encodeOK), &(Buff.lock), &outtime);
+
+        if (buffOneFrame(&Buff, cam)) {
+            pthread_cond_signal(&(Buff.captureOK));
+            pthread_mutex_unlock(&(Buff.lock));
         }
-
-        if (buffOneFrame(&Buff[i], cam)) {
-
-            pthread_cond_signal(&(Buff[i].captureOK));
-
-            pthread_mutex_unlock(&(Buff[i].lock));
-
-            flag[i] = 1;
-
-            Buff[i].rpos = 0;
-
-            i = !i;
-
-            Buff[i].wpos = 0;
-
-            flag[i] = 0;
-
-        }
-
-        pthread_cond_signal(&(Buff[i].captureOK));
-
-        pthread_mutex_unlock(&(Buff[i].lock));
+        pthread_cond_signal(&(Buff.captureOK));
+        pthread_mutex_unlock(&(Buff.lock));
 
     }
     return 0;
@@ -219,31 +193,12 @@ void *video_Encode_Thread(void*) {
     {
         usleep(1);
 
-        if ((flag[1] == 0 && flag[0] == 0) || flag[i] == -1)
-            continue;
-
-        if (flag[0] == 1)
-            i = 0;
-
-        if (flag[1] == 1)
-            i = 1;
-
-        pthread_mutex_lock(&(Buff[i].lock));
+        pthread_mutex_lock(&(Buff.lock));
 
         //编码一帧数据
-        encode_frame((Buff[i].cam_mbuf + Buff[i].rpos), pipefd ,tmp);
-
-        Buff[i].rpos += framelength;
-
-        if (Buff[i].rpos >= BUF_SIZE) {
-            Buff[i].rpos = 0;
-            Buff[!i].rpos = 0;
-            flag[i] = -1;
-        }
-
-        pthread_cond_signal(&(Buff[i].encodeOK));
-
-        pthread_mutex_unlock(&(Buff[i].lock));
+        encode_frame((Buff.cam_mbuf), pipefd ,tmp);
+        pthread_cond_signal(&(Buff.encodeOK));
+        pthread_mutex_unlock(&(Buff.lock));
 
     }
     return 0;
