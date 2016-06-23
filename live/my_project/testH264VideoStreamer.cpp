@@ -95,24 +95,17 @@ int init() {
         exit(1);
 
     }
-
     cam->device_name = (char*)CAM_NAME;
-
     cam->buffers = NULL;
-
     cam->width = PIC_WIDTH;
-
     cam->height = PIC_HEIGHT;
-
     framelength = YUV_FRAME_SIZE;
 
     v4l2_init(cam);
     // 初始化缓冲区
     {
     initBuff(Buff);
-
     initBuff1(tmp);    
-
     pipe(pipefd);//创建管道用于live555发送进程与编码进程的通信测试
     }
     thread_create();//创建线程
@@ -164,11 +157,8 @@ void *video_Capture_Thread(void*) {
         usleep(DelayTime);
 
         gettimeofday(&now, NULL);
-
         outtime.tv_sec = now.tv_sec;
-
         outtime.tv_nsec = DelayTime * 1000;
-
         pthread_mutex_lock(&(Buff.lock));
 
         pthread_cond_timedwait(&(Buff.encodeOK), &(Buff.lock), &outtime);
@@ -176,6 +166,7 @@ void *video_Capture_Thread(void*) {
         if (buffOneFrame(&Buff, cam)) {
             pthread_cond_signal(&(Buff.captureOK));
             pthread_mutex_unlock(&(Buff.lock));
+			printf("Done ! read data from camera buff!\n");
         }
         pthread_cond_signal(&(Buff.captureOK));
         pthread_mutex_unlock(&(Buff.lock));
@@ -192,17 +183,17 @@ void *video_Encode_Thread(void*) {
 
     {
         usleep(1);
-
         pthread_mutex_lock(&(Buff.lock));
-
         //编码一帧数据
         encode_frame((Buff.cam_mbuf), pipefd ,tmp);
         pthread_cond_signal(&(Buff.encodeOK));
         pthread_mutex_unlock(&(Buff.lock));
-
+		/**
+		* ����̽����Ϣ
+		*/
+		printf("Done! encode the frame buff\n");
     }
     return 0;
-
 }
 void *live555_trans_Thread(void*){
 
