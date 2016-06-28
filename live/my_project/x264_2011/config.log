@@ -1,0 +1,171 @@
+x264 configure script
+Command line options: "--prefix=/opt/usr/local/arm/x264" "--host=arm-linux" "--enable-shared" "--disable-asm" "--cross-prefix=/opt/usr/local/arm/4.3.2/bin/arm-linux-"
+
+checking whether /opt/usr/local/arm/4.3.2/bin/arm-linux-gcc works... yes
+checking for -std=gnu99... yes
+checking for pthread.h... yes
+checking for return log2f(2); in math.h... yes
+checking for sws_getContext(0,0,0,0,0,0,0,0,0,0); in libswscale/swscale.h... no
+Failed commandline was:
+--------------------------------------------------
+/opt/usr/local/arm/4.3.2/bin/arm-linux-gcc conftest.c  -Wall -I. -std=gnu99  -lswscale -lavutil   -lm -lpthread
+conftest.c:1:32: error: libswscale/swscale.h: No such file or directory
+conftest.c: In function 'main':
+conftest.c:2: warning: implicit declaration of function 'sws_getContext'
+--------------------------------------------------
+Failed program was:
+--------------------------------------------------
+#include <libswscale/swscale.h>
+int main () { sws_getContext(0,0,0,0,0,0,0,0,0,0); return 0; }
+--------------------------------------------------
+checking for -lpostproc... no
+Failed commandline was:
+--------------------------------------------------
+/opt/usr/local/arm/4.3.2/bin/arm-linux-gcc conftest.c  -Wall -I. -std=gnu99 -lpostproc   -lm -lpthread
+/opt/usr/local/arm/4.3.2/bin/../lib/gcc/arm-none-linux-gnueabi/4.3.2/../../../../arm-none-linux-gnueabi/bin/ld: cannot find -lpostproc
+collect2: ld returned 1 exit status
+--------------------------------------------------
+Failed program was:
+--------------------------------------------------
+int main () {  return 0; }
+--------------------------------------------------
+checking for -lavcodec... no
+Failed commandline was:
+--------------------------------------------------
+/opt/usr/local/arm/4.3.2/bin/arm-linux-gcc conftest.c  -Wall -I. -std=gnu99 -lavcodec   -lm -lpthread
+/opt/usr/local/arm/4.3.2/bin/../lib/gcc/arm-none-linux-gnueabi/4.3.2/../../../../arm-none-linux-gnueabi/bin/ld: cannot find -lavcodec
+collect2: ld returned 1 exit status
+--------------------------------------------------
+Failed program was:
+--------------------------------------------------
+int main () {  return 0; }
+--------------------------------------------------
+checking for -lavcore... no
+Failed commandline was:
+--------------------------------------------------
+/opt/usr/local/arm/4.3.2/bin/arm-linux-gcc conftest.c  -Wall -I. -std=gnu99 -lavcore   -lm -lpthread
+/opt/usr/local/arm/4.3.2/bin/../lib/gcc/arm-none-linux-gnueabi/4.3.2/../../../../arm-none-linux-gnueabi/bin/ld: cannot find -lavcore
+collect2: ld returned 1 exit status
+--------------------------------------------------
+Failed program was:
+--------------------------------------------------
+int main () {  return 0; }
+--------------------------------------------------
+checking for -lswscale... no
+Failed commandline was:
+--------------------------------------------------
+/opt/usr/local/arm/4.3.2/bin/arm-linux-gcc conftest.c  -Wall -I. -std=gnu99 -lswscale   -lm -lpthread
+/opt/usr/local/arm/4.3.2/bin/../lib/gcc/arm-none-linux-gnueabi/4.3.2/../../../../arm-none-linux-gnueabi/bin/ld: cannot find -lswscale
+collect2: ld returned 1 exit status
+--------------------------------------------------
+Failed program was:
+--------------------------------------------------
+int main () {  return 0; }
+--------------------------------------------------
+checking for -lavutil... no
+Failed commandline was:
+--------------------------------------------------
+/opt/usr/local/arm/4.3.2/bin/arm-linux-gcc conftest.c  -Wall -I. -std=gnu99 -lavutil   -lm -lpthread
+/opt/usr/local/arm/4.3.2/bin/../lib/gcc/arm-none-linux-gnueabi/4.3.2/../../../../arm-none-linux-gnueabi/bin/ld: cannot find -lavutil
+collect2: ld returned 1 exit status
+--------------------------------------------------
+Failed program was:
+--------------------------------------------------
+int main () {  return 0; }
+--------------------------------------------------
+checking for -lm... yes
+checking for -lz... yes
+checking for -lbz2... no
+Failed commandline was:
+--------------------------------------------------
+/opt/usr/local/arm/4.3.2/bin/arm-linux-gcc conftest.c  -Wall -I. -std=gnu99 -lbz2   -lm -lpthread
+/opt/usr/local/arm/4.3.2/bin/../lib/gcc/arm-none-linux-gnueabi/4.3.2/../../../../arm-none-linux-gnueabi/bin/ld: cannot find -lbz2
+collect2: ld returned 1 exit status
+--------------------------------------------------
+Failed program was:
+--------------------------------------------------
+int main () {  return 0; }
+--------------------------------------------------
+checking for -lpthread... yes
+checking for -lavifil32... no
+Failed commandline was:
+--------------------------------------------------
+/opt/usr/local/arm/4.3.2/bin/arm-linux-gcc conftest.c  -Wall -I. -std=gnu99 -lavifil32   -lm -lpthread
+/opt/usr/local/arm/4.3.2/bin/../lib/gcc/arm-none-linux-gnueabi/4.3.2/../../../../arm-none-linux-gnueabi/bin/ld: cannot find -lavifil32
+collect2: ld returned 1 exit status
+--------------------------------------------------
+Failed program was:
+--------------------------------------------------
+int main () {  return 0; }
+--------------------------------------------------
+checking for avcodec_decode_video2(0,0,0,0); in libavformat/avformat.h... no
+Failed commandline was:
+--------------------------------------------------
+/opt/usr/local/arm/4.3.2/bin/arm-linux-gcc conftest.c  -Wall -I. -std=gnu99  -L. -lavformat -lm -lz -lpthread   -lm -lpthread
+conftest.c:1:34: error: libavformat/avformat.h: No such file or directory
+conftest.c: In function 'main':
+conftest.c:2: warning: implicit declaration of function 'avcodec_decode_video2'
+--------------------------------------------------
+Failed program was:
+--------------------------------------------------
+#include <libavformat/avformat.h>
+int main () { avcodec_decode_video2(0,0,0,0); return 0; }
+--------------------------------------------------
+checking for FFMS_DestroyVideoSource(0); in ffms.h... no
+Failed commandline was:
+--------------------------------------------------
+/opt/usr/local/arm/4.3.2/bin/arm-linux-gcc conftest.c  -Wall -I. -std=gnu99  -lffms2   -lm -lpthread
+conftest.c:1:18: error: ffms.h: No such file or directory
+conftest.c: In function 'main':
+conftest.c:2: warning: implicit declaration of function 'FFMS_DestroyVideoSource'
+--------------------------------------------------
+Failed program was:
+--------------------------------------------------
+#include <ffms.h>
+int main () { FFMS_DestroyVideoSource(0); return 0; }
+--------------------------------------------------
+checking for FFMS_DestroyVideoSource(0); in ffms.h... no
+Failed commandline was:
+--------------------------------------------------
+/opt/usr/local/arm/4.3.2/bin/arm-linux-gcc conftest.c  -Wall -I. -std=gnu99  -lffms2 -lstdc++ -L. -lavformat -lm -lz -lpthread   -lm -lpthread
+conftest.c:1:18: error: ffms.h: No such file or directory
+conftest.c: In function 'main':
+conftest.c:2: warning: implicit declaration of function 'FFMS_DestroyVideoSource'
+--------------------------------------------------
+Failed program was:
+--------------------------------------------------
+#include <ffms.h>
+int main () { FFMS_DestroyVideoSource(0); return 0; }
+--------------------------------------------------
+checking for gpac/isomedia.h... no
+Failed commandline was:
+--------------------------------------------------
+/opt/usr/local/arm/4.3.2/bin/arm-linux-gcc conftest.c  -Wall -I. -std=gnu99 -lgpac_static   -lm -lpthread
+conftest.c:1:27: error: gpac/isomedia.h: No such file or directory
+--------------------------------------------------
+Failed program was:
+--------------------------------------------------
+#include <gpac/isomedia.h>
+int main () {  return 0; }
+--------------------------------------------------
+checking for stdio.h... yes
+checking for -fno-tree-vectorize... yes
+checking for fseeko(stdin,0,0); in stdio.h... yes
+checking for -Wshadow... yes
+
+Platform:   ARM
+System:     LINUX
+asm:        no
+avs:        no
+lavf:       no
+ffms:       no
+gpac:       no
+gpl:        yes
+thread:     posix
+filters:    crop select_every 
+debug:      no
+gprof:      no
+PIC:        yes
+shared:     yes
+visualize:  no
+bit depth:  8
